@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chang.shiro.mapper.UserMapper">
+    <resultMap id="userMap" type="com.chang.shiro.model.SysUser">
+        <id property="id" column="id" />
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <collection property="roles" ofType="com.chang.shiro.model.Role" >
+            <id property="rid" column="rid"/>
+            <result property="rname" column="rname"/>
+            <collection property="permissions" ofType="com.chang.shiro.model.Permission">
+                <id property="pid" column="pid" />
+                <result property="pname" column="pname" />
+                <result property="url" column="url" />
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="findUserByUsername" parameterType="com.chang.shiro.model.SysUser" resultMap="userMap">
+        select u.*,r.*,p.* from sys_user u
+            inner join user_role ur on ur.rid = u.id
+            inner join role r on r.rid = ur.rid
+            inner join permission_role pr on pr.rid = r.rid
+            inner join permission p on p.pid = pr.pid
+        where u.username = #{username}
+    </select>
+</mapper>
